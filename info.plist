@@ -61,6 +61,8 @@
 			<dict>
 				<key>alfredfiltersresults</key>
 				<false/>
+				<key>argumenttrimmode</key>
+				<integer>0</integer>
 				<key>argumenttype</key>
 				<integer>0</integer>
 				<key>escaping</key>
@@ -78,7 +80,7 @@
 				<key>runningsubtext</key>
 				<string></string>
 				<key>script</key>
-				<string>ruby bj_url.rb "$@"</string>
+				<string>ruby --disable-gems blue_url.rb "$@"</string>
 				<key>scriptargtype</key>
 				<integer>1</integer>
 				<key>scriptfile</key>
@@ -160,8 +162,11 @@
 				<key>escaping</key>
 				<integer>102</integer>
 				<key>script</key>
-				<string># all args are coming in as $1 (so passing in $@ instead of "$@")
-/usr/bin/env ruby ./bj_url.rb --add $@</string>
+				<string># Note, this adds a record to the database
+# So it can not be run via autocomplete (there is no way to know the user has typed a letter vs hit return
+
+# all args are coming in as $1 (so passing in $@ instead of "$@")
+/usr/bin/ruby --disable-gems ./blue_url.rb --add $@</string>
 				<key>scriptargtype</key>
 				<integer>1</integer>
 				<key>scriptfile</key>
@@ -186,35 +191,35 @@
 			<key>xpos</key>
 			<integer>470</integer>
 			<key>ypos</key>
-			<integer>250</integer>
+			<integer>400</integer>
 		</dict>
 		<key>50A9CF98-652C-4A58-8A57-A1E82B5797C4</key>
 		<dict>
 			<key>xpos</key>
-			<integer>50</integer>
+			<integer>40</integer>
 			<key>ypos</key>
-			<integer>120</integer>
+			<integer>110</integer>
 		</dict>
 		<key>58D5E99A-4B31-4257-99E4-79C037556B25</key>
 		<dict>
 			<key>xpos</key>
 			<integer>280</integer>
 			<key>ypos</key>
-			<integer>250</integer>
+			<integer>400</integer>
 		</dict>
 		<key>7AAB29C0-DCC2-4E66-A15D-0DD6ABE34A05</key>
 		<dict>
 			<key>xpos</key>
 			<integer>50</integer>
 			<key>ypos</key>
-			<integer>250</integer>
+			<integer>400</integer>
 		</dict>
 		<key>AF053C54-F0BC-485F-B579-41413FEC42CF</key>
 		<dict>
 			<key>xpos</key>
-			<integer>290</integer>
+			<integer>280</integer>
 			<key>ypos</key>
-			<integer>120</integer>
+			<integer>110</integer>
 		</dict>
 	</dict>
 	<key>webaddress</key>

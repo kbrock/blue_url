@@ -164,15 +164,14 @@ class BjUrl
         "arg" => url,
         "title" => (m_phrase == num || m_phrase == name) ? name : "#{m_phrase} (#{name})",
         "subtitle" => num, 
-        "text" => { "copy" => url}
+        "text" => { "copy" => num, "largetype" => num}
       }
 #         "icon": { "type": "fileicon", "path": "~/Desktop"}
-#         "text": { "copy": "clip board", "largetype": "screen text" },
 #         "mods": {
 #           "alt": {"arg": "AAA", "subtitle": "AAA"},
 #           "cmd": { }
 #         },
-# # "quicklookurl"
+# # "text" => {"quicklookurl": "http://x.com/"}
       ret.merge!("title" => @alias, "subtitle" => name) if @alias
       ret
     end
@@ -253,9 +252,10 @@ if __FILE__ == $0
   action = :retrieve
   case ARGV[0]
   when "--url" # debugging
-    mode = :url
     ARGV.shift
+    mode = :url
   when "--id" # debugging
+    ARGV.shift
     mode = :id
   when "--add"
     ARGV.shift
