@@ -164,7 +164,7 @@ class BjUrl
         "arg" => url,
         "title" => (m_phrase == num || m_phrase == name) ? name : "#{m_phrase} (#{name})",
         "subtitle" => num, 
-        "text" => { "copy" => num, "largetype" => num}
+        "text" => { "copy" => "https://bluejeans.com/#{num}", "largetype" => num},
       }
 #         "icon": { "type": "fileicon", "path": "~/Desktop"}
 #         "mods": {
