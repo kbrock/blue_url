@@ -61,6 +61,8 @@
 			<dict>
 				<key>alfredfiltersresults</key>
 				<false/>
+				<key>alfredfiltersresultsmatchmode</key>
+				<integer>0</integer>
 				<key>argumenttrimmode</key>
 				<integer>0</integer>
 				<key>argumenttype</key>
@@ -191,7 +193,7 @@
 			<key>xpos</key>
 			<integer>470</integer>
 			<key>ypos</key>
-			<integer>400</integer>
+			<integer>270</integer>
 		</dict>
 		<key>50A9CF98-652C-4A58-8A57-A1E82B5797C4</key>
 		<dict>
@@ -205,14 +207,14 @@
 			<key>xpos</key>
 			<integer>280</integer>
 			<key>ypos</key>
-			<integer>400</integer>
+			<integer>270</integer>
 		</dict>
 		<key>7AAB29C0-DCC2-4E66-A15D-0DD6ABE34A05</key>
 		<dict>
 			<key>xpos</key>
-			<integer>50</integer>
+			<integer>40</integer>
 			<key>ypos</key>
-			<integer>400</integer>
+			<integer>270</integer>
 		</dict>
 		<key>AF053C54-F0BC-485F-B579-41413FEC42CF</key>
 		<dict>
