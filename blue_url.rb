@@ -1,82 +1,6 @@
 #!/usr/bin/ruby
 
-#require "base32" # inline instead
 #require "json"   # inline instead
-
-################# BASE32 ###################
-# https://github.com/stesla/base32/blob/master/lib/base32.rb
-
-unless defined?(Base32)
-module Base32
-  TABLE = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567".freeze
-  @table = TABLE
-
-  class << self
-    attr_reader :table
-  end
-
-  class Chunk
-    def initialize(bytes)
-      @bytes = bytes
-    end
-
-    def decode
-      bytes = @bytes.take_while {|c| c != 61} # strip padding
-      n = (bytes.length * 5.0 / 8.0).floor
-      p = bytes.length < 8 ? 5 - (n * 8) % 5 : 0
-      c = bytes.inject(0) do |m,o|
-        i = Base32.table.index(o.chr)
-        raise ArgumentError, "invalid character '#{o.chr}'" if i.nil?
-        (m << 5) + i
-      end >> p
-      (0..n-1).to_a.reverse.collect {|i| ((c >> i * 8) & 0xff).chr}
-    end
-
-    def encode
-      n = (@bytes.length * 8.0 / 5.0).ceil
-      p = n < 8 ? 5 - (@bytes.length * 8) % 5 : 0
-      c = @bytes.inject(0) {|m,o| (m << 8) + o} << p
-      [(0..n-1).to_a.reverse.collect {|i| Base32.table[(c >> i * 5) & 0x1f].chr},
-       ("=" * (8-n))]
-    end
-  end
-
-  def self.chunks(str, size)
-    result = []
-    bytes = str.bytes
-    while bytes.any? do
-      result << Chunk.new(bytes.take(size))
-      bytes = bytes.drop(size)
-    end
-    result
-  end
-
-  def self.encode(str)
-    chunks(str, 5).collect(&:encode).flatten.join
-  end
-
-  def self.decode(str)
-    chunks(str, 8).collect(&:decode).flatten.join
-  end
-
-  # def self.random_base32(length=16, padding=true)
-  #   random = ''
-  #   OpenSSL::Random.random_bytes(length).each_byte do |b|
-  #     random << self.table[b % 32]
-  #   end
-  #   padding ? random.ljust((length / 8.0).ceil * 8, '=') : random
-  # end
-
-  def self.table=(table)
-    raise ArgumentError, "Table must have 32 unique characters" unless self.table_valid?(table)
-    @table = table
-  end
-
-  def self.table_valid?(table)
-    table.bytes.to_a.size == 32 && table.bytes.to_a.uniq.size == 32
-  end
-end
-end # ifdef
 
 #########################
 
@@ -89,38 +13,10 @@ end
 end # ifdef
 
 #########################
-# https://github.com/Aldaviva/ruby-bjn-app-url-generator
 
-Base32.table = "0123456789abcdefghjkmnpqrtuvwxyz"
 class BlueJeansUrlGenerator
-  CTXVER = "1.0.0"
-
-  def createLaunchContext(meetingId, passcode=nil)
-    context = {
-      "meeting_id" => meetingId
-#    :user_full_name => nil, # optional, defaults to the name of the logged-in user
-#    :user_email => nil, # optional, defaults to the email address of the logged-in user
-#    :user_token => nil, # optional, if you've already logged into Blue Jeans and received an API access token and want the app to be logged in as the same user
-    
-#    :meeting_api => "https://bluejeans.com", # optional, always https://bluejeans.com
-#    :release_channel => "live" # optional, always live
-    }
-    context["role_passcode"] = passcode.to_s.rjust(4, '0') if passcode
-    context
-  end
-
-  def createLaunchUrl(launchContext)
-    launchContextJson = JSON.generate(launchContext)
-    encodedContext = Base32.encode(launchContextJson).sub(/=+$/, '')
-    "bjn://meeting/#{encodedContext}?ctxver=#{CTXVER}"
-  end
-
-  def cleanMeetingId(meetingId)
-    meetingId
-  end
-
-  def generate(meetingId, passcode = nil)
-    createLaunchUrl(createLaunchContext(cleanMeetingId(meetingId), passcode))
+  def generate(meeting_id, passcode = nil)
+    "bjnb://meet/id/#{meeting_id}#{ "/#{passcode}" if passcode}"
   end
 end
 
@@ -210,6 +106,7 @@ class BjUrl
 
     data = db_from_file
     # if the number already exists, we will add this alias to that entry
+    # TODO: be able to add an alias to an existing alias e.g.: n.aliases.include?(num)
     old_data = data.detect { |n| n.num == num }
     data.reject! { |n| n.num == num }
     # merge old data and new data
@@ -222,6 +119,13 @@ class BjUrl
     new_num
   end
 
+  def urls(argv)
+    clean_search(argv, true).map(&:url)
+  end
+
+  def numbers(argv)
+    clean_search(argv, true).map(&:id)
+  end
   private
 
   def db_from_file(filename = db_file_name)
