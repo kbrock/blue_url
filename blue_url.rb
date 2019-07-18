@@ -97,6 +97,10 @@ class BjUrl
     items
   end
 
+  def clean_search(phrase, extra = false)
+    search(clean_url(phrase), extra)
+  end
+
   # thinking about merge option
   # TODO: if the name is with another entry, remove it
   def add(num, *aliases)
@@ -126,6 +130,13 @@ class BjUrl
   def numbers(argv)
     clean_search(argv, true).map(&:id)
   end
+
+  def alfred(argv)
+    phrase = clean_url(argv)
+    items = search(phrase, true)
+    JSON.generate("items" => items.map {|i| i.to_hash(phrase)})
+  end
+
   private
 
   def db_from_file(filename = db_file_name)
@@ -152,38 +163,20 @@ class BjUrl
 end
 
 if __FILE__ == $0
-  # output mode
-  action = :retrieve
-  case ARGV[0]
-  when "--url" # debugging
-    ARGV.shift
-    mode = :url
-  when "--id" # debugging
-    ARGV.shift
-    mode = :id
-  when "--add"
-    ARGV.shift
-    action = :create
-  else
-    mode = :alfred
-  end
+  bu = BjUrl.new
 
-  case action
-  when :create
-    bu = BjUrl.new
+  case ARGV[0]
+  when "--url" # debugging the url generated
+    ARGV.shift
+    puts bu.urls(ARGV)
+  when "--id" # debugging the id lookup in the address book
+    ARGV.shift
+    puts bu.numbers(ARGV)
+  when "--add" # adding the record to the address book
+    ARGV.shift
     item = bu.add(*ARGV)
     puts "#{item.num}: #{item.aliases.join(", ")}"
-  when :retrieve
-    bu = BjUrl.new
-    phrase = bu.clean_url(ARGV)
-    items = bu.search(phrase, true)
-    case mode
-    when :url
-      puts items.map { |item| item.url }
-    when :id
-      puts items.map { |item| item.num }
-    when :alfred
-      puts JSON.generate("items" => items.map {|i| i.to_hash(phrase)}) # unless items.empty?
-    end
+  else
+    puts bu.alfred(ARGV)
   end
 end
